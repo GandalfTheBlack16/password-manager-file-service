@@ -18,10 +18,11 @@ public class FileService {
     private final FileMetadataRepository fileMetadataRepository;
     private final FileMetadataMapper fileMetadataMapper;
 
-    public FilePostResponse createFile(FileDto fileDto) {
+    public FilePostResponse createFile(FileDto fileDto, String userId) {
         FileMetadataEntity entity = fileMetadataMapper.dtoToEntity(fileDto);
         entity.setCreationDate(Date.from(Instant.now()));
         entity.setStatus(FileStatus.CREATED);
+        entity.setOwner(userId);
         return fileMetadataMapper.entityToResponse(fileMetadataRepository.save(entity));
     }
 }
