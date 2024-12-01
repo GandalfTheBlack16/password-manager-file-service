@@ -11,6 +11,10 @@ spring:
   data:
     mongodb:
       uri: mongodb://root:example@localhost:27017/password-manager?authSource=admin
+password-manager:
+  security:
+    jwt:
+      secret: caa288691c0e008d66eb44e6c3dc6d5280660ea8cb6d249c449d3750cb54d260
 ---
 spring:
   config:
@@ -19,4 +23,8 @@ spring:
   data:
     mongodb:
       uri: ${MONGO.URI}
+password-manager:
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
 ---
