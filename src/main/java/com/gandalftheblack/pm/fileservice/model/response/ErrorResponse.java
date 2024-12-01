@@ -1,14 +1,13 @@
 package com.gandalftheblack.pm.fileservice.model.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class FilePostResponse extends HttpBaseResponse{
-    private String fileId;
-    private String fileName;
-    private String mimeType;
+@AllArgsConstructor
+public class ErrorResponse extends HttpBaseResponse{
     private String status;
-    private String creationDate;
+    private String message;
 }
