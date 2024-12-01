@@ -3,6 +3,11 @@ spring:
     name: PasswordManagerFileService
   profiles:
     active: local
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
+      location: ${java.io.tmpdir}
 ---
 spring:
   config:
@@ -23,6 +28,10 @@ spring:
   data:
     mongodb:
       uri: ${MONGO.URI}
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE}
+      max-request-size: ${MAX_REQUEST_SIZE}
 password-manager:
   security:
     jwt:

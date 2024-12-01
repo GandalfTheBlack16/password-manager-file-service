@@ -1,11 +1,9 @@
 package com.gandalftheblack.pm.fileservice.model.response;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class FilePostResponse extends HttpBaseResponse{
+public class FilePostResponse {
     private String fileId;
     private String fileName;
     private String mimeType;
