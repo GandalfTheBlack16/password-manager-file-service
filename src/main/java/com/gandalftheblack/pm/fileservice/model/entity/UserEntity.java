@@ -10,8 +10,9 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Data
 @Builder
 public class UserEntity {
-    @Id
-    @Field("_id")
-    private String id;
-    private String email;
+  @Id
+  @Field("_id")
+  private String id;
+
+  private String email;
 }
