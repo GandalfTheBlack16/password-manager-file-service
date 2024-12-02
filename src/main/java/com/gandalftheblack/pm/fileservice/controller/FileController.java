@@ -1,6 +1,7 @@
 package com.gandalftheblack.pm.fileservice.controller;
 
 import com.gandalftheblack.pm.fileservice.model.entity.FileStatus;
+import com.gandalftheblack.pm.fileservice.model.exception.EmptyMultipartFileException;
 import com.gandalftheblack.pm.fileservice.model.response.FileListGetResponse;
 import com.gandalftheblack.pm.fileservice.model.response.MultipleFilePostResponse;
 import com.gandalftheblack.pm.fileservice.service.FileService;
@@ -29,8 +30,7 @@ public class FileController {
             ){
         String userId = securityService.getUserIdFromToken(authHeader);
         if (files.isEmpty() || files.getFirst().isEmpty()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Files multipart param must not be empty");
+            throw new EmptyMultipartFileException();
         }
         MultipleFilePostResponse response = fileService.uploadFile(files, userId);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
