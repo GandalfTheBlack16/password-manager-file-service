@@ -66,4 +66,14 @@ public class FileController {
     }
     return ResponseEntity.status(HttpStatus.OK).build();
   }
+
+  @PutMapping("/restore/{id}")
+  public ResponseEntity<FileGetResponse> restoreFile(
+      @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @PathVariable String id) {
+    String userId = securityService.getUserIdFromToken(authHeader);
+    Optional<FileGetResponse> optionalResponse = fileService.restoreFile(userId, id);
+    return optionalResponse
+        .map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.noContent().build());
+  }
 }

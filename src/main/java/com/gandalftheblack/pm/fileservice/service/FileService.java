@@ -66,6 +66,18 @@ public class FileService {
     return true;
   }
 
+  public Optional<FileGetResponse> restoreFile(String userId, String fileId) {
+    Optional<FileMetadataEntity> optionalFileMetadataEntity =
+        fileMetadataRepository.findByOwnerAndId(userId, fileId);
+    if (optionalFileMetadataEntity.isPresent()) {
+      FileMetadataEntity metadataEntity = optionalFileMetadataEntity.get();
+      metadataEntity.setStatus(FileStatus.RESTORED);
+      metadataEntity.setModificationDate(new Date());
+      optionalFileMetadataEntity = Optional.of(fileMetadataRepository.save(metadataEntity));
+    }
+    return fileMetadataMapper.entityToGetResponse(optionalFileMetadataEntity);
+  }
+
   private File transformMultipartFile(MultipartFile file) {
     File uploadedFile =
         new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename());

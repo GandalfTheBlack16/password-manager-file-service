@@ -140,4 +140,32 @@ class FileServiceTest {
     verify(fileMetadataRepository, times(0)).save(any(FileMetadataEntity.class));
     assertFalse(result);
   }
+
+  @Test
+  void shouldRestoreFileById() {
+    FileMetadataEntity metadataEntity =
+        FileMetadataEntity.builder()
+            .id("0001")
+            .owner("1")
+            .fileName("demo.txt")
+            .status(FileStatus.CREATED)
+            .mimeType("text/plain")
+            .build();
+    when(fileMetadataRepository.findByOwnerAndId("1", "0001"))
+        .thenReturn(Optional.of(metadataEntity));
+    when(fileMetadataMapper.entityToGetResponse(Optional.of(metadataEntity)))
+        .thenReturn(
+            Optional.of(
+                FileGetResponse.builder()
+                    .id("0001")
+                    .fileName("demo.txt")
+                    .mimeType("text/plain")
+                    .build()));
+    when(fileMetadataRepository.save(any())).thenReturn(metadataEntity);
+    Optional<FileGetResponse> response = fileService.restoreFile("1", "0001");
+    assertTrue(response.isPresent());
+    assertEquals("0001", response.get().getId());
+    assertEquals("demo.txt", response.get().getFileName());
+    assertEquals("text/plain", response.get().getMimeType());
+  }
 }
