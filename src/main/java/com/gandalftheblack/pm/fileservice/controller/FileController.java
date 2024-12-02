@@ -2,11 +2,12 @@ package com.gandalftheblack.pm.fileservice.controller;
 
 import com.gandalftheblack.pm.fileservice.model.entity.FileStatus;
 import com.gandalftheblack.pm.fileservice.model.exception.EmptyMultipartFileException;
-import com.gandalftheblack.pm.fileservice.model.response.FileListGetResponse;
+import com.gandalftheblack.pm.fileservice.model.response.FileGetResponse;
 import com.gandalftheblack.pm.fileservice.model.response.MultipleFilePostResponse;
 import com.gandalftheblack.pm.fileservice.service.FileService;
 import com.gandalftheblack.pm.fileservice.service.SecurityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,13 +37,14 @@ public class FileController {
     }
 
     @GetMapping
-    public ResponseEntity<FileListGetResponse> getFiles(
+    public ResponseEntity<Page<FileGetResponse>> getFiles(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @RequestParam(defaultValue = "CREATED") List<FileStatus> status,
-            @RequestParam(required = false) String query
+            @RequestParam(required = false) String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
     ){
         String userId = securityService.getUserIdFromToken(authHeader);
-        FileListGetResponse response = fileService.getFilesOfUser(userId, status, query);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(fileService.getFilesOfUser(userId, status, query, page, size));
     }
 }

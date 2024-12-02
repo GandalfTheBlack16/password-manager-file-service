@@ -4,12 +4,16 @@ import com.gandalftheblack.pm.fileservice.mapper.FileMetadataMapper;
 import com.gandalftheblack.pm.fileservice.model.entity.FileMetadataEntity;
 import com.gandalftheblack.pm.fileservice.model.entity.FileStatus;
 import com.gandalftheblack.pm.fileservice.model.exception.FileUploadException;
-import com.gandalftheblack.pm.fileservice.model.response.FileListGetResponse;
+import com.gandalftheblack.pm.fileservice.model.response.FileGetResponse;
 import com.gandalftheblack.pm.fileservice.model.response.FilePostResponse;
 import com.gandalftheblack.pm.fileservice.model.response.MultipleFilePostResponse;
 import com.gandalftheblack.pm.fileservice.repository.FileMetadataRepository;
 import com.gandalftheblack.pm.fileservice.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,13 +41,9 @@ public class FileService {
         return new MultipleFilePostResponse(filePostResponses);
     }
 
-    public FileListGetResponse getFilesOfUser(String userId, List<FileStatus> status, String query){
-        FileListGetResponse response = new FileListGetResponse(new LinkedList<>());
-        List<FileMetadataEntity> fileMetadataEntities = fileMetadataRepository.findAllByOwnerFilteredByStatusAndName(userId, status, query);
-        if (!fileMetadataEntities.isEmpty()) {
-            fileMetadataEntities.forEach(fileMetadata -> response.getFiles().add(fileMetadataMapper.entityToGetResponse(fileMetadata)));
-        }
-        return response;
+    public Page<FileGetResponse> getFilesOfUser(String userId, List<FileStatus> status, String query, int page, int size){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.asc("creationDate")));
+        return fileMetadataRepository.findAllByOwnerFilteredByStatusAndName(userId, status, query, pageable);
     }
 
     private File transformMultipartFile (MultipartFile file) {

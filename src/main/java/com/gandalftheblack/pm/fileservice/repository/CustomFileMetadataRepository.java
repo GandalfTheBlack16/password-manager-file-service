@@ -1,10 +1,12 @@
 package com.gandalftheblack.pm.fileservice.repository;
 
-import com.gandalftheblack.pm.fileservice.model.entity.FileMetadataEntity;
 import com.gandalftheblack.pm.fileservice.model.entity.FileStatus;
+import com.gandalftheblack.pm.fileservice.model.response.FileGetResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface CustomFileMetadataRepository {
-    List<FileMetadataEntity> findAllByOwnerFilteredByStatusAndName(String owner, List<FileStatus> status, String nameFilter);
+    Page<FileGetResponse> findAllByOwnerFilteredByStatusAndName(String owner, List<FileStatus> status, String nameFilter, Pageable pageable);
 }
