@@ -5,8 +5,8 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.gandalftheblack.pm.fileservice.exception.InvalidTokenException;
-import com.gandalftheblack.pm.fileservice.exception.UnauthenticatedUserException;
+import com.gandalftheblack.pm.fileservice.model.exception.InvalidTokenException;
+import com.gandalftheblack.pm.fileservice.model.exception.UnauthenticatedUserException;
 import com.gandalftheblack.pm.fileservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +27,7 @@ public class SecurityService {
     private static final Pattern TOKEN_PATTERN
             = Pattern.compile("^Bearer *([^ ]+) *$", Pattern.CASE_INSENSITIVE);
 
-    public String getUserIdFromToken(String authorizationHeader) throws UnauthenticatedUserException, InvalidTokenException {
+    public String getUserIdFromToken(String authorizationHeader) throws InvalidTokenException {
         String authToken = extractToken(authorizationHeader);
         String email = getTokenEmailClaim(authToken);
         return userRepository

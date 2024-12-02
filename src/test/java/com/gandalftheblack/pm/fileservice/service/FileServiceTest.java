@@ -47,7 +47,7 @@ class FileServiceTest {
                 .fileSize(multipartFile.getSize())
                 .build();
         when(fileMetadataRepository.save(any())).thenReturn(expectedFileMetadata);
-        when(fileMetadataMapper.entityToResponse(any())).thenReturn(FilePostResponse
+        when(fileMetadataMapper.entityToPostResponse(any())).thenReturn(FilePostResponse
                 .builder()
                         .status("CREATED")
                         .fileName("test.txt")

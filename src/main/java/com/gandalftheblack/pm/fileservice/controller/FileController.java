@@ -1,9 +1,7 @@
 package com.gandalftheblack.pm.fileservice.controller;
 
-import com.gandalftheblack.pm.fileservice.exception.InvalidTokenException;
-import com.gandalftheblack.pm.fileservice.exception.UnauthenticatedUserException;
-import com.gandalftheblack.pm.fileservice.model.response.ErrorResponse;
-import com.gandalftheblack.pm.fileservice.model.response.HttpBaseResponse;
+import com.gandalftheblack.pm.fileservice.model.entity.FileStatus;
+import com.gandalftheblack.pm.fileservice.model.response.FileListGetResponse;
 import com.gandalftheblack.pm.fileservice.model.response.MultipleFilePostResponse;
 import com.gandalftheblack.pm.fileservice.service.FileService;
 import com.gandalftheblack.pm.fileservice.service.SecurityService;
@@ -11,41 +9,40 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/file")
 public class FileController {
     private final FileService fileService;
     private final SecurityService securityService;
 
-    @PostMapping("/api/file")
-    public ResponseEntity<HttpBaseResponse> postFile(
+    @PostMapping
+    public ResponseEntity<MultipleFilePostResponse> postFile(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @RequestParam List<MultipartFile> files
             ){
-        try {
-            if (files.isEmpty()) {
-                return new ResponseEntity<>(new ErrorResponse("Bad request", "File is empty"), HttpStatus.BAD_REQUEST);
-            }
-            String userId = securityService.getUserIdFromToken(authHeader);
-            MultipleFilePostResponse response = fileService.uploadFile(files, userId);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } catch (UnauthenticatedUserException e) {
-            return new ResponseEntity<>(new ErrorResponse("Unauthorized", String.format("User authentication failed: %s", e.getEmail())),
-                    HttpStatus.UNAUTHORIZED);
-        } catch (InvalidTokenException e) {
-            return new ResponseEntity<>(new ErrorResponse("Invalid token", "Token provided could not be verified"),
-                    HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new ErrorResponse("Unexpected error", e.getMessage()),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+        String userId = securityService.getUserIdFromToken(authHeader);
+        if (files.isEmpty() || files.getFirst().isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Files multipart param must not be empty");
         }
+        MultipleFilePostResponse response = fileService.uploadFile(files, userId);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<FileListGetResponse> getFiles(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @RequestParam(defaultValue = "CREATED") List<FileStatus> status
+    ){
+        String userId = securityService.getUserIdFromToken(authHeader);
+        FileListGetResponse response = fileService.getFilesOfUser(userId, status);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

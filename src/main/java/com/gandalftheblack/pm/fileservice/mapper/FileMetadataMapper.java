@@ -1,6 +1,7 @@
 package com.gandalftheblack.pm.fileservice.mapper;
 
 import com.gandalftheblack.pm.fileservice.model.entity.FileMetadataEntity;
+import com.gandalftheblack.pm.fileservice.model.response.FileGetResponse;
 import com.gandalftheblack.pm.fileservice.model.response.FilePostResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -8,5 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface FileMetadataMapper {
     @Mapping(source = "id", target = "fileId")
-    FilePostResponse entityToResponse(FileMetadataEntity entity);
+    FilePostResponse entityToPostResponse(FileMetadataEntity entity);
+    @Mapping(source = "id", target = "fileId")
+    FileGetResponse entityToGetResponse(FileMetadataEntity entity);
 }

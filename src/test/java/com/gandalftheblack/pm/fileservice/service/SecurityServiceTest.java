@@ -1,8 +1,8 @@
 package com.gandalftheblack.pm.fileservice.service;
 
-import com.gandalftheblack.pm.fileservice.exception.InvalidTokenException;
-import com.gandalftheblack.pm.fileservice.exception.UnauthenticatedUserException;
 import com.gandalftheblack.pm.fileservice.model.entity.UserEntity;
+import com.gandalftheblack.pm.fileservice.model.exception.InvalidTokenException;
+import com.gandalftheblack.pm.fileservice.model.exception.UnauthenticatedUserException;
 import com.gandalftheblack.pm.fileservice.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
