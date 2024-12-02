@@ -1,5 +1,6 @@
 package com.gandalftheblack.pm.fileservice.model.entity;
 
+import com.gandalftheblack.pm.fileservice.model.entity.value.FileStatus;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;

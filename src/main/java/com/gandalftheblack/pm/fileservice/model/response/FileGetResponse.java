@@ -2,7 +2,7 @@ package com.gandalftheblack.pm.fileservice.model.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.gandalftheblack.pm.fileservice.model.entity.FileStatus;
+import com.gandalftheblack.pm.fileservice.model.entity.value.FileStatus;
 import lombok.Builder;
 import lombok.Data;
 

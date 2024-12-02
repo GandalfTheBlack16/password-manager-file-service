@@ -1,4 +1,4 @@
-package com.gandalftheblack.pm.fileservice.model.entity;
+package com.gandalftheblack.pm.fileservice.model.entity.value;
 
 public enum FileStatus {
     CREATED,

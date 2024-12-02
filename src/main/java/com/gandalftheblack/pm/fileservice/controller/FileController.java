@@ -1,6 +1,6 @@
 package com.gandalftheblack.pm.fileservice.controller;
 
-import com.gandalftheblack.pm.fileservice.model.entity.FileStatus;
+import com.gandalftheblack.pm.fileservice.model.entity.value.FileStatus;
 import com.gandalftheblack.pm.fileservice.model.exception.EmptyMultipartFileException;
 import com.gandalftheblack.pm.fileservice.model.response.FileGetResponse;
 import com.gandalftheblack.pm.fileservice.model.response.MultipleFilePostResponse;

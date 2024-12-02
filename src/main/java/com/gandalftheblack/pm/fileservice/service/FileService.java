@@ -2,7 +2,7 @@ package com.gandalftheblack.pm.fileservice.service;
 
 import com.gandalftheblack.pm.fileservice.mapper.FileMetadataMapper;
 import com.gandalftheblack.pm.fileservice.model.entity.FileMetadataEntity;
-import com.gandalftheblack.pm.fileservice.model.entity.FileStatus;
+import com.gandalftheblack.pm.fileservice.model.entity.value.FileStatus;
 import com.gandalftheblack.pm.fileservice.model.exception.FileUploadException;
 import com.gandalftheblack.pm.fileservice.model.response.FileGetResponse;
 import com.gandalftheblack.pm.fileservice.model.response.FilePostResponse;
