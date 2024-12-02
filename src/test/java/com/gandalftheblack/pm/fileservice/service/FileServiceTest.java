@@ -114,4 +114,30 @@ class FileServiceTest {
     assertEquals("demo.txt", response.get().getFileName());
     assertEquals("text/plain", response.get().getMimeType());
   }
+
+  @Test
+  void shouldDeleteFileById() {
+    FileMetadataEntity metadataEntity =
+        FileMetadataEntity.builder()
+            .id("0001")
+            .owner("1")
+            .fileName("demo.txt")
+            .status(FileStatus.CREATED)
+            .mimeType("text/plain")
+            .build();
+    when(fileMetadataRepository.findByOwnerAndId("1", "0001"))
+        .thenReturn(Optional.of(metadataEntity));
+
+    boolean result = fileService.deleteFileById("1", "0001");
+    verify(fileMetadataRepository, times(1)).save(any(FileMetadataEntity.class));
+    assertTrue(result);
+  }
+
+  @Test
+  void shouldNotDeleteNoExistingFileById() {
+    when(fileMetadataRepository.findByOwnerAndId("1", "0001")).thenReturn(Optional.empty());
+    boolean result = fileService.deleteFileById("1", "0001");
+    verify(fileMetadataRepository, times(0)).save(any(FileMetadataEntity.class));
+    assertFalse(result);
+  }
 }

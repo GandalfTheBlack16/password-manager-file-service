@@ -11,7 +11,6 @@ import com.gandalftheblack.pm.fileservice.repository.FileMetadataRepository;
 import com.gandalftheblack.pm.fileservice.repository.FileRepository;
 import java.io.File;
 import java.io.IOException;
-import java.time.Instant;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -54,6 +53,19 @@ public class FileService {
         fileMetadataRepository.findByOwnerAndId(userId, fileId));
   }
 
+  public boolean deleteFileById(String userId, String fileId) {
+    Optional<FileMetadataEntity> optionalFileMetadataEntity =
+        fileMetadataRepository.findByOwnerAndId(userId, fileId);
+    if (optionalFileMetadataEntity.isEmpty()) {
+      return false;
+    }
+    FileMetadataEntity fileMetadataEntity = optionalFileMetadataEntity.get();
+    fileMetadataEntity.setStatus(FileStatus.DELETED);
+    fileMetadataEntity.setDeletionDate(new Date());
+    fileMetadataRepository.save(fileMetadataEntity);
+    return true;
+  }
+
   private File transformMultipartFile(MultipartFile file) {
     File uploadedFile =
         new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename());
@@ -74,7 +86,7 @@ public class FileService {
         .fileSize(multipartFile.getSize())
         .path(path)
         .status(FileStatus.CREATED)
-        .creationDate(Date.from(Instant.now()))
+        .creationDate(new Date())
         .build();
   }
 }

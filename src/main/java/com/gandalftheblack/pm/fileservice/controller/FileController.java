@@ -53,6 +53,17 @@ public class FileController {
     Optional<FileGetResponse> optionalResponse = fileService.getFileById(userId, id);
     return optionalResponse
         .map(ResponseEntity::ok)
-        .orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
+        .orElseGet(() -> ResponseEntity.noContent().build());
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteFile(
+      @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @PathVariable String id) {
+    String userId = securityService.getUserIdFromToken(authHeader);
+    boolean deleted = fileService.deleteFileById(userId, id);
+    if (!deleted) {
+      return ResponseEntity.noContent().build();
+    }
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 }
