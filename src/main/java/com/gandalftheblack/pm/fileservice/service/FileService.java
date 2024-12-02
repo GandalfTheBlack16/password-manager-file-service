@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +45,10 @@ public class FileService {
     public Page<FileGetResponse> getFilesOfUser(String userId, List<FileStatus> status, String query, int page, int size){
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.asc("creationDate")));
         return fileMetadataRepository.findAllByOwnerFilteredByStatusAndName(userId, status, query, pageable);
+    }
+
+    public Optional<FileGetResponse> getFileById(String userId, String fileId){
+        return fileMetadataMapper.entityToGetResponse(fileMetadataRepository.findByOwnerAndId(userId, fileId));
     }
 
     private File transformMultipartFile (MultipartFile file) {

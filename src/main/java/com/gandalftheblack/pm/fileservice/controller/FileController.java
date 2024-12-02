@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,5 +47,15 @@ public class FileController {
     ){
         String userId = securityService.getUserIdFromToken(authHeader);
         return ResponseEntity.ok(fileService.getFilesOfUser(userId, status, query, page, size));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<FileGetResponse> getFileById(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @PathVariable String id
+    ){
+        String userId = securityService.getUserIdFromToken(authHeader);
+        Optional<FileGetResponse> optionalResponse = fileService.getFileById(userId, id);
+        return optionalResponse.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
     }
 }
