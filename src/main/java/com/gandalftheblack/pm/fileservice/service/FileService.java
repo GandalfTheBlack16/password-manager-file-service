@@ -37,9 +37,9 @@ public class FileService {
         return new MultipleFilePostResponse(filePostResponses);
     }
 
-    public FileListGetResponse getFilesOfUser(String userId, List<FileStatus> status){
+    public FileListGetResponse getFilesOfUser(String userId, List<FileStatus> status, String query){
         FileListGetResponse response = new FileListGetResponse(new LinkedList<>());
-        List<FileMetadataEntity> fileMetadataEntities = fileMetadataRepository.findAllByOwnerAndStatusIn(userId, status);
+        List<FileMetadataEntity> fileMetadataEntities = fileMetadataRepository.findAllByOwnerFilteredByStatusAndName(userId, status, query);
         if (!fileMetadataEntities.isEmpty()) {
             fileMetadataEntities.forEach(fileMetadata -> response.getFiles().add(fileMetadataMapper.entityToGetResponse(fileMetadata)));
         }

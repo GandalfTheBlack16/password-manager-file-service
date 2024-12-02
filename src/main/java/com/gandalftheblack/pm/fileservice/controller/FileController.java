@@ -38,10 +38,11 @@ public class FileController {
     @GetMapping
     public ResponseEntity<FileListGetResponse> getFiles(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-            @RequestParam(defaultValue = "CREATED") List<FileStatus> status
+            @RequestParam(defaultValue = "CREATED") List<FileStatus> status,
+            @RequestParam(required = false) String query
     ){
         String userId = securityService.getUserIdFromToken(authHeader);
-        FileListGetResponse response = fileService.getFilesOfUser(userId, status);
+        FileListGetResponse response = fileService.getFilesOfUser(userId, status, query);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
