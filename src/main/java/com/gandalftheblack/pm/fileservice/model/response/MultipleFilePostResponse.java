@@ -1,12 +1,11 @@
 package com.gandalftheblack.pm.fileservice.model.response;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 public class MultipleFilePostResponse {
-    List<FilePostResponse> uploadedFiles;
+  List<FilePostResponse> uploadedFiles;
 }

@@ -17,32 +17,41 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(InvalidTokenException.class)
-    protected ResponseEntity<Object> handleInvalidTokenException(RuntimeException ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse("Bad Request", "Token provided could not be verified");
-        return handleExceptionInternal(ex, errorResponse, new HttpHeaders(),
-                HttpStatus.BAD_REQUEST, request);
-    }
+  @ExceptionHandler(InvalidTokenException.class)
+  protected ResponseEntity<Object> handleInvalidTokenException(
+      RuntimeException ex, WebRequest request) {
+    ErrorResponse errorResponse =
+        new ErrorResponse("Bad Request", "Token provided could not be verified");
+    return handleExceptionInternal(
+        ex, errorResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+  }
 
-    @ExceptionHandler(UnauthenticatedUserException.class)
-    protected ResponseEntity<Object> handleUnauthenticatedUserException(RuntimeException ex, WebRequest request) {
-        UnauthenticatedUserException exception = (UnauthenticatedUserException) ex;
-        ErrorResponse errorResponse = new ErrorResponse("Unauthorized", String.format("User authentication failed: %s", exception.getEmail()));
-        return handleExceptionInternal(ex, errorResponse, new HttpHeaders(),
-                HttpStatus.UNAUTHORIZED, request);
-    }
+  @ExceptionHandler(UnauthenticatedUserException.class)
+  protected ResponseEntity<Object> handleUnauthenticatedUserException(
+      RuntimeException ex, WebRequest request) {
+    UnauthenticatedUserException exception = (UnauthenticatedUserException) ex;
+    ErrorResponse errorResponse =
+        new ErrorResponse(
+            "Unauthorized", String.format("User authentication failed: %s", exception.getEmail()));
+    return handleExceptionInternal(
+        ex, errorResponse, new HttpHeaders(), HttpStatus.UNAUTHORIZED, request);
+  }
 
-    @ExceptionHandler(FileUploadException.class)
-    protected ResponseEntity<Object> handleFileUploadException(RuntimeException ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse("Internal error", "Unexpected error uploading file");
-        return handleExceptionInternal(ex, errorResponse, new HttpHeaders(),
-                HttpStatus.INTERNAL_SERVER_ERROR, request);
-    }
+  @ExceptionHandler(FileUploadException.class)
+  protected ResponseEntity<Object> handleFileUploadException(
+      RuntimeException ex, WebRequest request) {
+    ErrorResponse errorResponse =
+        new ErrorResponse("Internal error", "Unexpected error uploading file");
+    return handleExceptionInternal(
+        ex, errorResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+  }
 
-    @ExceptionHandler({MultipartException.class, EmptyMultipartFileException.class})
-    protected ResponseEntity<Object> handleMultipartFilesException(RuntimeException ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse("Bad request", "Files multipart param must not be empty");
-        return handleExceptionInternal(ex, errorResponse, new HttpHeaders(),
-                HttpStatus.BAD_REQUEST, request);
-    }
+  @ExceptionHandler({MultipartException.class, EmptyMultipartFileException.class})
+  protected ResponseEntity<Object> handleMultipartFilesException(
+      RuntimeException ex, WebRequest request) {
+    ErrorResponse errorResponse =
+        new ErrorResponse("Bad request", "Files multipart param must not be empty");
+    return handleExceptionInternal(
+        ex, errorResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+  }
 }

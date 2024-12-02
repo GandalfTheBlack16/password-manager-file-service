@@ -8,5 +8,5 @@ import lombok.EqualsAndHashCode;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class UnauthenticatedUserException extends RuntimeException {
-    private String email;
+  private String email;
 }

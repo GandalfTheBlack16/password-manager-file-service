@@ -1,5 +1,3 @@
 package com.gandalftheblack.pm.fileservice.model.exception;
 
-
-public class InvalidTokenException extends RuntimeException{
-}
+public class InvalidTokenException extends RuntimeException {}
