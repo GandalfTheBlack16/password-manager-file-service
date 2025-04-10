@@ -7,11 +7,14 @@ import static org.mockito.Mockito.*;
 import com.gandalftheblack.pm.fileservice.mapper.FileMetadataMapper;
 import com.gandalftheblack.pm.fileservice.model.entity.FileMetadataEntity;
 import com.gandalftheblack.pm.fileservice.model.entity.value.FileStatus;
+import com.gandalftheblack.pm.fileservice.model.response.FileDownloadResponse;
 import com.gandalftheblack.pm.fileservice.model.response.FileGetResponse;
 import com.gandalftheblack.pm.fileservice.model.response.FilePostResponse;
 import com.gandalftheblack.pm.fileservice.model.response.MultipleFilePostResponse;
 import com.gandalftheblack.pm.fileservice.repository.FileMetadataRepository;
 import com.gandalftheblack.pm.fileservice.repository.FileRepository;
+
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -41,7 +44,6 @@ class FileServiceTest {
             .fileName("test.txt")
             .owner("1111")
             .mimeType("text/plain")
-            .path("/dir/text.txt")
             .status(FileStatus.CREATED)
             .fileSize(multipartFile.getSize())
             .build();
@@ -100,19 +102,9 @@ class FileServiceTest {
             .build();
     when(fileMetadataRepository.findByOwnerAndId("1", "0001"))
         .thenReturn(Optional.of(metadataEntity));
-    when(fileMetadataMapper.entityToGetResponse(Optional.of(metadataEntity)))
-        .thenReturn(
-            Optional.of(
-                FileGetResponse.builder()
-                    .id("0001")
-                    .fileName("demo.txt")
-                    .mimeType("text/plain")
-                    .build()));
-    Optional<FileGetResponse> response = fileService.getFileById("1", "0001");
-    assertTrue(response.isPresent());
-    assertEquals("0001", response.get().getId());
-    assertEquals("demo.txt", response.get().getFileName());
-    assertEquals("text/plain", response.get().getMimeType());
+    FileDownloadResponse response = fileService.getFileById("1", "0001");
+    assertEquals("demo.txt", response.getFileName());
+    assertEquals("text/plain", response.getMimeType());
   }
 
   @Test

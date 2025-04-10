@@ -3,18 +3,12 @@ package com.gandalftheblack.pm.fileservice.service;
 import com.gandalftheblack.pm.fileservice.mapper.FileMetadataMapper;
 import com.gandalftheblack.pm.fileservice.model.entity.FileMetadataEntity;
 import com.gandalftheblack.pm.fileservice.model.entity.value.FileStatus;
-import com.gandalftheblack.pm.fileservice.model.exception.FileUploadException;
+import com.gandalftheblack.pm.fileservice.model.response.FileDownloadResponse;
 import com.gandalftheblack.pm.fileservice.model.response.FileGetResponse;
 import com.gandalftheblack.pm.fileservice.model.response.FilePostResponse;
 import com.gandalftheblack.pm.fileservice.model.response.MultipleFilePostResponse;
 import com.gandalftheblack.pm.fileservice.repository.FileMetadataRepository;
 import com.gandalftheblack.pm.fileservice.repository.FileRepository;
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +16,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,8 +33,8 @@ public class FileService {
   public MultipleFilePostResponse uploadFile(List<MultipartFile> multipartFileList, String userId) {
     List<FilePostResponse> filePostResponses = new LinkedList<>();
     for (MultipartFile multipartFile : multipartFileList) {
-      String path = fileRepository.saveFile(transformMultipartFile(multipartFile));
-      FileMetadataEntity fileMetadataEntity = buildFileMetadata(multipartFile, userId, path);
+      String fileId = fileRepository.saveFile(multipartFile);
+      FileMetadataEntity fileMetadataEntity = buildFileMetadata(multipartFile, userId, fileId);
       filePostResponses.add(
           fileMetadataMapper.entityToPostResponse(fileMetadataRepository.save(fileMetadataEntity)));
     }
@@ -48,9 +48,18 @@ public class FileService {
         userId, status, query, pageable);
   }
 
-  public Optional<FileGetResponse> getFileById(String userId, String fileId) {
-    return fileMetadataMapper.entityToGetResponse(
-        fileMetadataRepository.findByOwnerAndId(userId, fileId));
+  public FileDownloadResponse getFileById(String userId, String fileId) {
+    FileMetadataEntity fileMetadataEntity = fileMetadataRepository.findByOwnerAndId(userId, fileId).orElse(null);
+    if (fileMetadataEntity == null) {
+        return null;
+    }
+    File file = fileRepository.getFile(fileMetadataEntity.getObjectId(), fileMetadataEntity.getFileName());
+    return FileDownloadResponse.builder()
+        .fileName(fileMetadataEntity.getFileName())
+        .fileSize(fileMetadataEntity.getFileSize())
+        .mimeType(fileMetadataEntity.getMimeType())
+        .file(file)
+        .build();
   }
 
   public boolean deleteFileById(String userId, String fileId) {
@@ -78,25 +87,14 @@ public class FileService {
     return fileMetadataMapper.entityToGetResponse(optionalFileMetadataEntity);
   }
 
-  private File transformMultipartFile(MultipartFile file) {
-    File uploadedFile =
-        new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename());
-    try {
-      file.transferTo(uploadedFile);
-    } catch (IOException e) {
-      throw new FileUploadException(e);
-    }
-    return uploadedFile;
-  }
-
   private FileMetadataEntity buildFileMetadata(
-      MultipartFile multipartFile, String userId, String path) {
+      MultipartFile multipartFile, String userId, String fileId) {
     return FileMetadataEntity.builder()
         .fileName(multipartFile.getOriginalFilename())
         .owner(userId)
+        .objectId(fileId)
         .mimeType(multipartFile.getContentType())
         .fileSize(multipartFile.getSize())
-        .path(path)
         .status(FileStatus.CREATED)
         .creationDate(new Date())
         .build();

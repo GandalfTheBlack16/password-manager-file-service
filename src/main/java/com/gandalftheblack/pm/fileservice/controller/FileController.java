@@ -2,19 +2,30 @@ package com.gandalftheblack.pm.fileservice.controller;
 
 import com.gandalftheblack.pm.fileservice.model.entity.value.FileStatus;
 import com.gandalftheblack.pm.fileservice.model.exception.EmptyMultipartFileException;
+import com.gandalftheblack.pm.fileservice.model.response.FileDownloadResponse;
 import com.gandalftheblack.pm.fileservice.model.response.FileGetResponse;
 import com.gandalftheblack.pm.fileservice.model.response.MultipleFilePostResponse;
 import com.gandalftheblack.pm.fileservice.service.FileService;
 import com.gandalftheblack.pm.fileservice.service.SecurityService;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,13 +58,19 @@ public class FileController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<FileGetResponse> getFileById(
+  public ResponseEntity<FileSystemResource> getFileById(
       @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader, @PathVariable String id) {
     String userId = securityService.getUserIdFromToken(authHeader);
-    Optional<FileGetResponse> optionalResponse = fileService.getFileById(userId, id);
-    return optionalResponse
-        .map(ResponseEntity::ok)
-        .orElseGet(() -> ResponseEntity.noContent().build());
+    FileDownloadResponse response = fileService.getFileById(userId, id);
+    if (response == null) {
+      return ResponseEntity.noContent().build();
+    }
+    FileSystemResource resource = new FileSystemResource(response.getFile());
+    HttpHeaders headers = new HttpHeaders();
+    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + response.getFileName());
+    headers.add(HttpHeaders.CONTENT_TYPE, response.getMimeType());
+    headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(response.getFileSize()));
+    return ResponseEntity.ok().headers(headers).body(resource);
   }
 
   @DeleteMapping("/{id}")
