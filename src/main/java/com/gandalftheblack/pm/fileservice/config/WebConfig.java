@@ -9,16 +9,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig {
 
-    @Value("${password-manager.security.cors.allowed-origins}")
-    private String[] allowedOrigins;
+  @Value("${password-manager.security.cors.allowed-origins}")
+  private String[] allowedOrigins;
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/file").allowedOrigins(allowedOrigins);
-            }
-        };
-    }
+  @Bean
+  public WebMvcConfigurer corsConfigurer() {
+    return new WebMvcConfigurer() {
+      @Override
+      public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/api/file").allowedOrigins(allowedOrigins);
+      }
+    };
+  }
 }
