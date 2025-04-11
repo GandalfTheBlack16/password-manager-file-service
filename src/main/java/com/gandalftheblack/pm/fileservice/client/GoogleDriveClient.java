@@ -22,9 +22,11 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("pro")
 public class GoogleDriveClient {
   private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
   private final Drive driveInstance;
