@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,7 +55,13 @@ public class FileService {
     if (fileMetadataEntity == null) {
         return null;
     }
-    File file = fileRepository.getFile(fileMetadataEntity.getObjectId(), fileMetadataEntity.getFileName());
+    File file;
+    if (Files.exists(Path.of(fileMetadataEntity.getFileName()))){
+      file = new File(fileMetadataEntity.getFileName());
+    }
+    else {
+      file = fileRepository.getFile(fileMetadataEntity.getObjectId(), fileMetadataEntity.getFileName());
+    }
     return FileDownloadResponse.builder()
         .fileName(fileMetadataEntity.getFileName())
         .fileSize(fileMetadataEntity.getFileSize())

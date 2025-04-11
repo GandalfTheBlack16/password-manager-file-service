@@ -27,28 +27,28 @@ import static com.gandalftheblack.pm.fileservice.client.constants.GoogleDriveCon
 
 @Component
 public class GoogleDriveClient {
-
-    @Value("${google.drive.credentials.private_key_id}")
-    private String privateKeyId;
-    @Value("${google.drive.credentials.private_key}")
-    private String privateKey;
-    @Value("${google.drive.credentials.client_email}")
-    private String clientEmail;
-    @Value("${google.drive.credentials.client_id}")
-    private String clientId;
-    @Value("${google.drive.credentials.cert_url}")
-    private String clientX509CertUrl;
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
+    private final Drive driveInstance;
 
-    public Drive getInstance() throws GeneralSecurityException, IOException {
-       GoogleCredential credential = GoogleCredential
-               .fromStream(new BufferedInputStream(buildCredentialsFile()))
-               .createScoped(SCOPES);
-       return new Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, credential)
-               .build();
+    public GoogleDriveClient(
+            @Value("${google.drive.credentials.private_key_id}") String privateKeyId,
+            @Value("${google.drive.credentials.private_key}")String privateKey,
+            @Value("${google.drive.credentials.client_email}")String clientEmail,
+            @Value("${google.drive.credentials.client_id}")String clientId,
+            @Value("${google.drive.credentials.cert_url}")String clientX509CertUrl
+    ) throws IOException, GeneralSecurityException {
+        GoogleCredential credential = GoogleCredential
+                .fromStream(new BufferedInputStream(buildCredentialsFile(privateKeyId, privateKey, clientEmail, clientId, clientX509CertUrl)))
+                .createScoped(SCOPES);
+        driveInstance = new Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, credential)
+                .build();
     }
 
-    private InputStream buildCredentialsFile() {
+    public Drive getInstance() {
+       return driveInstance;
+    }
+
+    private InputStream buildCredentialsFile(String privateKeyId, String privateKey, String clientEmail, String clientId, String clientX509CertUrl) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("type", new JsonPrimitive(CREDENTIALS_TYPE));
         jsonObject.add("project_id", new JsonPrimitive(APPLICATION_NAME));
