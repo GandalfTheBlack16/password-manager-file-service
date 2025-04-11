@@ -5,7 +5,6 @@ import com.gandalftheblack.pm.fileservice.model.exception.FileUploadException;
 import com.gandalftheblack.pm.fileservice.repository.FileRepository;
 import java.io.File;
 import java.io.IOException;
-
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,7 +28,7 @@ public class LocalFileRepository implements FileRepository {
 
   private File transformMultipartFile(MultipartFile file) {
     File uploadedFile =
-            new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename());
+        new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename());
     try {
       file.transferTo(uploadedFile);
     } catch (IOException e) {

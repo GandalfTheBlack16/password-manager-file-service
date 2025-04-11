@@ -9,14 +9,6 @@ import com.gandalftheblack.pm.fileservice.model.response.FilePostResponse;
 import com.gandalftheblack.pm.fileservice.model.response.MultipleFilePostResponse;
 import com.gandalftheblack.pm.fileservice.repository.FileMetadataRepository;
 import com.gandalftheblack.pm.fileservice.repository.FileRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,6 +16,13 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -51,16 +50,18 @@ public class FileService {
   }
 
   public FileDownloadResponse getFileById(String userId, String fileId) {
-    FileMetadataEntity fileMetadataEntity = fileMetadataRepository.findByOwnerAndId(userId, fileId).orElse(null);
+    FileMetadataEntity fileMetadataEntity =
+        fileMetadataRepository.findByOwnerAndId(userId, fileId).orElse(null);
     if (fileMetadataEntity == null) {
-        return null;
+      return null;
     }
     File file;
-    if (Files.exists(Path.of(fileMetadataEntity.getFileName()))){
+    if (Files.exists(Path.of(fileMetadataEntity.getFileName()))) {
       file = new File(fileMetadataEntity.getFileName());
-    }
-    else {
-      file = fileRepository.getFile(fileMetadataEntity.getObjectId(), fileMetadataEntity.getFileName());
+    } else {
+      file =
+          fileRepository.getFile(
+              fileMetadataEntity.getObjectId(), fileMetadataEntity.getFileName());
     }
     return FileDownloadResponse.builder()
         .fileName(fileMetadataEntity.getFileName())
