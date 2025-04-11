@@ -16,7 +16,6 @@ public class FileMetadataEntity {
   private String fileName;
   private String mimeType;
   private Long fileSize;
-  private String path;
   private String owner;
   private FileStatus status;
   private Date creationDate;
