@@ -13,8 +13,6 @@ import com.gandalftheblack.pm.fileservice.model.response.FilePostResponse;
 import com.gandalftheblack.pm.fileservice.model.response.MultipleFilePostResponse;
 import com.gandalftheblack.pm.fileservice.repository.FileMetadataRepository;
 import com.gandalftheblack.pm.fileservice.repository.FileRepository;
-
-import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
